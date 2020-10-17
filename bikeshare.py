@@ -1,3 +1,8 @@
+# Python script that imports the data and answer interesting questions about it
+# by computing descriptive statistics.
+# The script takes in raw input to create an interactive experience in the 
+# terminal.
+3 to present these statistics.
 import time
 import pandas as pd
 import numpy as np
@@ -85,7 +90,7 @@ def load_data(city, month, day):
     """
     df = pd.read_csv(CITY_DATA[city])
     print("Number of records loaded for city [{}]: {:,}".format(city, df.shape[0]))
-    
+
     # Change data type of start time and end time columns from string to datetime
     df['Start Time'] = pd.to_datetime(df['Start Time'], format='%Y-%m-%d %H:%M:%S')
     df['End Time'] = pd.to_datetime(df['End Time'], format='%Y-%m-%d %H:%M:%S')
@@ -97,23 +102,23 @@ def load_data(city, month, day):
 
     if day != "all":
         df = df[df['Start Day'] == day]
-    
+
     # remove unnamed column number 1
     df.drop(columns=df.columns[0], inplace=True)
-    
+
     # re-index the DataFrame
     df.index = np.arange(1, df.shape[0]+1)
 
     if month != "all" or day != "all":
         print("Number of records after applying filter on month [{}] and day [{}]: {:,}".format(month, day, df.shape[0]))
-    
+
     print('-'*40)
     return df
 
 def display_counts(sr, row_str="{}\t{}", n=1, table=False):
     """
     Displays the counts of a given series.
-    
+
     Args:
         (Series) sr - Pandas Series to display its value counts
         {str)    row _str - the string that will be used to format the row
@@ -128,20 +133,20 @@ def display_counts(sr, row_str="{}\t{}", n=1, table=False):
     # check that provided row_str is valid
     if row_str.count("{}") != 2:
         row_str = "{}\t{}"
-    
+
     # Get value counts of the series
     val_counts = sr.value_counts()
 
     # Print table heading if required
     if table:
         print("{}\tCount".format(sr.name))
-    
+
     # Get number of rows to display based on 'n' and the actual length of the series
     if n > 0 and n < len(val_counts):
         r = range(n)
     else:
         r = range(len(val_counts))
-    
+
     for i in r:
         print(row_str.format(val_counts.index[i], val_counts.values[i]))
 
@@ -173,10 +178,10 @@ def station_stats(df):
 
     # display most commonly used end station
     display_counts(df['End Station'], "Most common End Station: [{}] - Used {} times")
-    
+
     # display most frequent combination of start station and end station trip
     display_counts(df['Start Station'] + " -> " + df['End Station'], "Most frequent combination Stations: [{}] - Number of trips: {}")
-    
+
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
 
@@ -207,12 +212,12 @@ def user_stats(df):
     # Display counts of user types
     display_counts(df['User Type'], n=0, table=True)
     print()
-    
+
     # Display counts of gender
     if 'Gender' in df:
         display_counts(df['Gender'], n=0, table=True)
         print()
-    
+
     # Display earliest, most recent, and most common year of birth
     if 'Birth Year' in df:
         # min
@@ -223,7 +228,7 @@ def user_stats(df):
         print("Most recent year of birth: {}".format(max_birth_year))
         # most common
         display_counts(df['Birth Year'], "Most common year of birth: {} - {} times")
-        
+
     print()
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
@@ -232,7 +237,7 @@ def display_data(df, n=5):
     """
     Displays raw data of given data frame 'n' records at a time
     """
-    # ask user if wants to 
+    # ask user if wants to
     show_data = input("Do you want to see 5 lines of raw data? Enter yes or no.\n")
     index = 1
     max_index = df.shape[0] - 1
